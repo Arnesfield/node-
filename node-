@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+node_dir="$NVM_DIR/versions/node"
+bin="node"
+
+if [ -d "$node_dir" ]; then
+  cd "$node_dir"
+  node_version=$(ls -1dv * | tail -1)
+  bin_latest="$node_dir/$node_version/bin/node"
+  if [ -f "$bin_latest" ]; then
+    bin="$bin_latest"
+  fi
+fi
+
+"$bin" "$@"
+exit $?
