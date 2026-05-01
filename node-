@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
 
+set -o pipefail
+
+if [ ! -d "$NVM_DIR" ]; then
+  echo 1>&2 "error: \$NVM_DIR is not a directory"
+  exit 1
+fi
+
 node_dir="$NVM_DIR/versions/node"
 bin="node"
 
 if [ -d "$node_dir" ]; then
-  node_version=$(cd "$node_dir" && ls -1dv * | tail -1)
+  node_version=$(find "$node_dir" -maxdepth 1 -type d -name "v*" -printf "%P\n" |
+    sort -V |
+    tail -1) || exit $?
   bin_latest="$node_dir/$node_version/bin/node"
-  if [ -f "$bin_latest" ]; then
+
+  if [ -x "$bin_latest" ]; then
     bin="$bin_latest"
   fi
 fi
 
 "$bin" "$@"
-exit $?
